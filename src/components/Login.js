@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
 import Header from './Header';
 import { checkvalidData } from '../utils/validate';
-import { toHaveErrorMessage } from '@testing-library/jest-dom/dist/matchers';
-import {  createUserWithEmailAndPassword } from "firebase/auth";
+//import { toHaveErrorMessage } from '@testing-library/jest-dom/dist/matchers';
+import {  createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../utils/firebase';
 
 const Login = () => {
@@ -14,7 +14,7 @@ const Login = () => {
   
   const handleButtonClick = ()=> {
 //validate data
-const message =checkvalidData(email.current.value, password.current.value,name.current.value);
+const message =checkvalidData(email.current.value, password.current.value);
 seterrormessage(message);
 if(message) return;
 
@@ -38,7 +38,18 @@ if(!isSignInForm)
 }
 else
 {
-
+  signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    console.log(user)
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    seterrormessage(errorCode + "-"+ errorMessage);
+  }); 
 }
 
 }
