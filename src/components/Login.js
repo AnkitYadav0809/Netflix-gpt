@@ -4,10 +4,12 @@ import { checkvalidData } from '../utils/validate';
 //import { toHaveErrorMessage } from '@testing-library/jest-dom/dist/matchers';
 import {  createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../utils/firebase';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [isSignInForm, setIsSignForm]=useState(true);
   const [errorMessage, seterrormessage]=useState(null)
+  const Navigate=useNavigate();
   const email=useRef(null);
   const password=useRef(null);
   const name=useRef(null);
@@ -26,6 +28,7 @@ if(!isSignInForm)
     // Signed up 
     const user = userCredential.user;
     console.log(user)
+    Navigate("/browse")
     // ...
   })
   .catch((error) => {
@@ -43,6 +46,7 @@ else
     // Signed in 
     const user = userCredential.user;
     console.log(user)
+    Navigate("/browse")
     // ...
   })
   .catch((error) => {
