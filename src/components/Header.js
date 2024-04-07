@@ -9,7 +9,7 @@ const Header = () => {
    alt='logo'/>
    <div className='flex p-2'>
     <img className='w-12 h-12 ' alt='usericon' src="https://occ-0-4875-2164.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABTZ2zlLdBVC05fsd2YQAR43J6vB1NAUBOOrxt7oaFATxMhtdzlNZ846H3D8TZzooe2-FT853YVYs8p001KVFYopWi4D4NXM.png?r=229" />
-   <button>Sign Out</button>
+   <button className='font-bold text-white'>Sign Out</button>
     </div> </div>
   )
 }
