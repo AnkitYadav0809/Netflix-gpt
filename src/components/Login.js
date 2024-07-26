@@ -1,125 +1,160 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "./Header";
-import checkValidData from "../utils/validate";
+import { checkValidate } from "../utils/validate";
+import { addUser } from "../utils/userSlice";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addUser } from "../utils/userSlice";
-import { BANNER } from "../utils/constants";
+import { background } from "../utils/constant";
 
 const Login = () => {
   const dispatch = useDispatch();
 
-  const [isSignInForm, setIsSignInForm] = useState(true);
+  const [singin, setSign] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
-
-  const toggleSignInForm = () => {
-    setIsSignInForm(!isSignInForm);
-  };
+  const naviagte = useNavigate();
 
   const handleButtonClick = () => {
-    //Validate the form data
-    const message = checkValidData(email.current.value, password.current.value);
+    const message = checkValidate(email.current.value, password.current.value);
     setErrorMessage(message);
+
     if (message) return;
-    //Signin/Signup Logic
-    if (!isSignInForm) {
+
+    if (!singin) {
+      //sign up
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
+          // Signed up
           const user = userCredential.user;
+          // const namedis = name.current.value.split(" ");
           updateProfile(user, {
             displayName: name.current.value,
+            photoURL: "https://wallpapers.com/images/high/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.webp",
           })
             .then(() => {
-              const { uid, email, displayName } = auth.currentUser;
+              const { uid, email, displayName, photoURL } = auth.currentUser;
               dispatch(
-                addUser({ uid: uid, email: email, displayName: displayName })
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
               );
+
+              naviagte("/browser");
             })
             .catch((error) => {
               setErrorMessage(error.message);
             });
         })
         .catch((error) => {
-          const errorCode = error.code;
           const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+          setErrorMessage(errorMessage);
+          // ..
         });
     } else {
+      //sign in
       signInWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
+          // Signed in
           const user = userCredential.user;
+          naviagte("/browser");
+          // console.log(user);
+          // ...
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+          setErrorMessage(errorMessage);
         });
     }
   };
-
+  const toggle = () => {
+    setSign(!singin);
+  };
   return (
     <div>
       <Header />
-      <div className="w-full absolute">
-        <img className="h-screen object-cover w-full" src={BANNER} />
+      <div className="absolute">
+        <img
+          src={background}
+          alt="background"
+        />
       </div>
       <form
-        onSubmit={(event) => event.preventDefault()}
-        className="w-full md:w-3/12 absolute p-12 bg-black my-36 mx-auto right-0 left-0 text-white bg-opacity-80"
+        onSubmit={(e) => e.preventDefault()}
+        className="w-4/12 p-12 absolute bg-black my-32 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80"
       >
         <h1 className="font-bold text-3xl py-4">
-          {isSignInForm ? "Sign In" : "Sign Up"}
+          {singin ? "Sign In" : "Sign Up"}
         </h1>
-        {!isSignInForm && (
+        <input
+          ref={email}
+          placeholder="Enter Email"
+          className="p-3 my-3 w-full bg-gray-700 rounded-lg"
+          required
+        />
+        {!singin && (
           <input
             ref={name}
             type="text"
-            placeholder="Enter your name"
-            className="p-4 my-4 w-full bg-gray-700 rounded-md"
+            placeholder="Enter Full Name"
+            className="p-3 my-3 w-full bg-gray-700 rounded-lg"
+            required
           />
         )}
         <input
-          ref={email}
-          type="email"
-          placeholder="Email Address"
-          className="p-4 my-4 w-full bg-gray-700 rounded-md"
-        />
-
-        <input
           ref={password}
           type="password"
-          placeholder="Password"
-          className="p-4 my-4 w-full bg-gray-700 rounded-md"
+          placeholder="Enter password"
+          className="p-3 my-3 w-full bg-gray-700 rounded-lg"
+          required
         />
-        <p className="text-red-500 fon-bold py-2">{errorMessage}</p>
+        {<p className="text-red-700 font-bold">{errorMessage}</p>}
         <button
-          className="p-4 my-6 bg-red-700 w-full rounded-md text-md cursor-pointer"
-          onClick={handleButtonClick}
+          className="p-3 my-5 w-full bg-red-600 rounded-lg "
+          type="submit"
+          onClick={() => handleButtonClick()}
         >
-          {isSignInForm ? "Sign In" : "Sign Up"}
+          {singin ? "Sign in" : "Sign Up"}
         </button>
-        <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
-          {isSignInForm
-            ? "New to Netflix? Sign Up now."
-            : "Already registered? Sign In now."}
-        </p>
+
+        {singin ? (
+          <p className="pt-2 ">
+            New to Netflix?
+            <span className="cursor-pointer font-bold" onClick={() => toggle()}>
+              {" "}
+              Sign Up Now
+            </span>
+          </p>
+        ) : (
+          <p className="pt-2 ">
+            Already member?
+            <span className="cursor-pointer font-bold" onClick={() => toggle()}>
+              {" "}
+              Sign In Now
+            </span>
+          </p>
+        )}
       </form>
     </div>
   );

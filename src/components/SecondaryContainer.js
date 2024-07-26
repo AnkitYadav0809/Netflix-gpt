@@ -1,26 +1,33 @@
+import React from "react";
+import VideoCardList from "./VideoCardList";
 import { useSelector } from "react-redux";
-import MovieList from "./MovieList";
 
 const SecondaryContainer = () => {
-  const movies = useSelector((store) => store.movies);
+  const movies = useSelector((store) => store.movie);
 
   return (
-    <div className="bg-black">
-      <div className="mt-0 md:-mt-52 pl-4 md:pl-12 relative z-20">
-        <MovieList title={"Now Playing"} movies={movies.nowPlayingMovies} />
-        <MovieList title={"Upcoming Movies"} movies={movies.upComingMovies} />
-        <MovieList title={"Top Rated"} movies={movies.topRatedMovies} />
-        <MovieList title={"Popular"} movies={movies.popularMovies} />
-        <MovieList
-          title={"Popular TV Series"}
-          movies={movies.popularTVSeries}
-        />
-        <MovieList
-          title={"Top Rated TV Series"}
-          movies={movies.topRatedTVSeries}
-        />
+    movies.nowPlayingmovies && (
+      <div className="bg-black">
+        <div className="-mt-40 pl-12 relative z-20">
+          <VideoCardList
+            movies={movies.nowPlayingmovies}
+            title={"Now Playing"}
+          />
+          <VideoCardList
+            movies={movies.trandigVideos}
+            title={"Trending on Netflix"}
+          />
+          <VideoCardList
+            movies={movies.nowPlayingmovies}
+            title={"Only on Netflix"}
+          />
+          <VideoCardList
+            movies={movies.nowPlayingmovies}
+            title={"Horror Videos"}
+          />
+        </div>
       </div>
-    </div>
+    )
   );
 };
 

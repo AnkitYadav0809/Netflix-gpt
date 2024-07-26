@@ -1,87 +1,79 @@
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import { auth } from "../utils/firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { onAuthStateChanged } from "firebase/auth";
 import { addUser, removeUser } from "../utils/userSlice";
-import { LOGO, SUPPORTED_LANGUAGES, USER_AVATAR } from "../utils/constants";
-import { toggleGptSearchView } from "../utils/gptSlice";
-import { changeLanguage } from "../utils/configSlice";
+import { netflix_logo } from "../utils/constant";
+import { toggleSearch } from "../utils/gptBtnSlice";
 
 const Header = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const user = useSelector((store) => store.user);
-  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
+
+  const navigate = useNavigate();
+  const handleClick = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const { uid, email, displayName } = user;
-        dispatch(addUser({ uid: uid, email: email, displayName: displayName }));
-        navigate("/browse");
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(
+          addUser({
+            uid: uid,
+            email: email,
+            displayName: displayName,
+            photoURL: photoURL,
+          })
+        );
+        navigate("/browser");
       } else {
         dispatch(removeUser());
         navigate("/");
       }
     });
-    // unsubscribe will be called when component unmounts
+
+    // Unsiubscribe when component unmounts
     return () => unsubscribe();
   }, []);
 
-  const handleGPTSearchClick = () => {
-    //Togggle GPT Search
-    dispatch(toggleGptSearchView());
+  const handleGpt = () => {
+    dispatch(toggleSearch());
   };
-
-  const handleLanguageChange = (event) => {
-    dispatch(changeLanguage(event.target.value));
-  };
-
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {})
-      .catch((error) => {
-        navigate("/error");
-      });
-  };
+  const clickBtn = useSelector((store) => store.gptBtn.clickBtn);
 
   return (
-    <div className="absolute w-screen px-8 py-2 pl-12 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
-      <img className="w-44 mx-auto md:mx-0" src={LOGO} alt="Netfix-logo" />
+    <div className="absolute w-full px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between">
+      <img className="w-52 mx-8" src={netflix_logo} alt="logo" />
 
       {user && (
-        <div className="flex p-2 justify-between">
-          {showGptSearch && (
-            <select
-              onChange={handleLanguageChange}
-              className="p-2 m-2 bg-gray-900 text-white"
-            >
-              {SUPPORTED_LANGUAGES.map((lang) => (
-                <option key={lang.identifier} value={lang.identifier}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
-          )}
+        <div className="flex p-2">
           <button
-            className="py-2 px-4 mx-4 my-2 bg-green-400 text-white rounded-md hover:bg-green-500"
-            onClick={handleGPTSearchClick}
+            onClick={handleGpt}
+            className="bg-red-600 text-white  p-2 mx-5 w-28 h-10 rounded-lg"
           >
-            {showGptSearch ? "Home" : "GPT Search"}
+            {clickBtn ? "HomePage" : "GPTsearch"}
           </button>
-          {/* <img
-            className="hidden md:block w-12 h-12"
-            src={USER_AVATAR}
-            alt="user icon"
-          /> */}
+          <img
+            className="w-10 h-10"
+            alt="default user"
+            src={user.photoURL}
+          ></img>
           <button
-            onClick={handleSignOut}
-            className="px-4 py-2 mx-4 my-2 bg-red-600 text-white rounded sm:font-bold "
+            onClick={handleClick}
+            className="font-bold text-white pb-7 pl-2"
           >
-            Sign out
+            Sign Out
           </button>
         </div>
       )}

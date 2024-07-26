@@ -1,21 +1,21 @@
-import { useSelector } from "react-redux";
+import React from "react";
+import BackgroundVideo from "./BackgroundVideo";
 import VideoTitle from "./VideoTitle";
-import VideoBackground from "./VideoBackground";
+import { useSelector } from "react-redux";
 
 const MainContainer = () => {
-  const movies = useSelector((store) => store.movies?.nowPlayingMovies);
-  //   console.log(movies);
+  const movies = useSelector((store) => store.movie?.nowPlayingmovies);
   if (!movies) return;
-  // const randomIndex = Math.floor(Math.random() * movies.length + 1);
 
-  const mainMovie = movies[0];
+  const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+  const random_index = random(0, movies.length - 1);
 
-  const { original_title, overview, id } = mainMovie;
-
+  const { original_title, overview, id } = movies[random_index];
   return (
-    <div className="pt-[30%] bg-black md:pt-0">
-      <VideoTitle title={original_title} overview={overview} />
-      <VideoBackground movieId={id} />
+    <div>
+      <VideoTitle title={original_title} overview={overview} id={id} />
+
+      <BackgroundVideo id={id} />
     </div>
   );
 };
