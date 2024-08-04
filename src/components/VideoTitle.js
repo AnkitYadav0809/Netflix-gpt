@@ -7,7 +7,7 @@ const VideoTitle = ({ title, overview }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Navigate to the '/details' route with state and replace the current entry in the history stack
+    
     navigate("/details", { state: { title, overview }, replace: true });
   };
   return (
