@@ -1,9 +1,9 @@
 import OpenAI from "openai";
-import { openai_gpt_key } from "./constant";
+import { OPENAI_KEY } from "./constants";
 
 const openai = new OpenAI({
-  apiKey: openai_gpt_key, 
-  dangerouslyAllowBrowser: true
+  apiKey: OPENAI_KEY,
+  dangerouslyAllowBrowser: true,
 });
 
 export default openai;
