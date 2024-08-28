@@ -40,12 +40,12 @@ const Header = () => {
       }
     });
 
-    // Unsubscribe when component unmounts
+    
     return () => unsubscribe();
   }, []);
 
   const handleGptSearchClick = () => {
-    // Toggle GPT Search
+   
     dispatch(toggleGptSearchView());
   };
 
