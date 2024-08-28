@@ -26,7 +26,7 @@ const Login = () => {
     if (message) return;
 
     if (!isSignInForm) {
-      // Sign Up Logic
+      
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
@@ -59,14 +59,14 @@ const Login = () => {
           setErrorMessage(errorCode + "-" + errorMessage);
         });
     } else {
-      // Sign In Logic
+  
       signInWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
-          // Signed in
+        
           const user = userCredential.user;
         })
         .catch((error) => {
