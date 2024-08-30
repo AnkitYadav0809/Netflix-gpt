@@ -10,7 +10,7 @@ const GptSearchBar = () => {
   const langKey = useSelector((store) => store.config.lang);
   const searchText = useRef(null);
 
-  // search movie in TMDB
+  
   const searchMovieTMDB = async (movie) => {
     const data = await fetch(
       "https://api.themoviedb.org/3/search/movie?query=" +
@@ -38,7 +38,7 @@ const GptSearchBar = () => {
     });
 
     if (!gptResults.choices) {
-      // TODO: Write Error Handling
+    
     }
 
     console.log(gptResults.choices?.[0]?.message?.content);
